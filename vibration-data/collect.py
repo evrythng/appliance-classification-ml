@@ -17,7 +17,7 @@ def get_training_data():
     evrythng_url = 'https://api.evrythng.com'
     collection_id = 'U4dp2qmYBD8wQpRwwE7y7Epa'
     property_name = 'magnitude'
-    trusted_api_key = '0YKrPmLEP0kJpMGZNmqeOJ58Ufk4TqvrDiWdRPp7xROs06EEltR2okm3augfPgx35hkAU7nO6TcjhSqo'
+    trusted_api_key = ''
 
     headers = {
         "Accept": "application/json",
