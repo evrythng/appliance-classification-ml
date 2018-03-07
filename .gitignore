@@ -162,3 +162,7 @@ ENV/
 .ropeproject
 pkp/
 .DS_Store
+
+
+# Files that contain evt api keys
+evt_config/*

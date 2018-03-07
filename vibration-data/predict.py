@@ -5,8 +5,10 @@ import paho.mqtt.client as mqtt
 import numpy as np
 import json
 
-thng_id = 'UnVeKXbmeg8atKaRw2hmaGgs'
-device_api_key = 'MDupaO0IxiEzC0mJ3rPT9LEO1rxsj3iJSFupEyNP9aFPjHcf57K61UL5M67R3U5GxJq6FEoxFLqTRnTQ'
+with open('evt_config/predict_config.json') as fd:
+    config = json.load(open(fd))
+    thng_id = config['thng_id']
+    device_api_key = config['device_api_key']
 
 model = load_model('trained_model.h5')
 

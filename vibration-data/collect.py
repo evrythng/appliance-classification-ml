@@ -13,12 +13,7 @@ x_train_file = 'x_train.json'
 y_train_file = 'y_train.json'
 
 
-def get_training_data():
-    evrythng_url = 'https://api.evrythng.com'
-    collection_id = 'U4dp2qmYBD8wQpRwwE7y7Epa'
-    property_name = 'magnitude'
-    trusted_api_key = ''
-
+def get_training_data(evrythng_url,collection_id,property_name,trusted_api_key):
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
@@ -85,7 +80,7 @@ def get_untrained_model(len):
 
 
 if not os.path.isfile(x_train_file) or not os.path.isfile(y_train_file):
-    x_training, y_training = get_training_data()
+    x_training, y_training = get_training_data(**json.load(open('evt_config.json')))
     json.dump(x_training.tolist(), open(x_train_file, 'w'))
     json.dump(y_training.tolist(), open(y_train_file, 'w'))
 else:
