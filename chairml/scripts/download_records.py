@@ -19,4 +19,5 @@ if __name__ == '__main__':
                     if thng not in dataset:
                         dataset[thng] = []
                     dataset[thng].append(e)
+
     ujson.dump(dataset,open(os.getenv('RAW_DATA'), 'w'),ensure_ascii=True)
