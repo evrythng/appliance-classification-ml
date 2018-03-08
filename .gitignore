@@ -166,3 +166,7 @@ pkp/
 
 # Files that contain evt api keys
 evt_config/*
+build/
+*.egg*
+
+chairml/venv/
