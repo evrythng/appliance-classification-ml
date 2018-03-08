@@ -3,6 +3,7 @@
 from libs.evt import *
 import os
 import ujson
+from trainer.model import mortion_property_value
 
 if __name__ == '__main__':
     config = dict(host=os.getenv('EVT_HOST'),

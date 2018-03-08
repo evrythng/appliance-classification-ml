@@ -16,6 +16,7 @@
 # ==============================================================================
 
 """Implements the Keras Sequential model."""
+import sys
 
 import keras
 import pandas as pd
@@ -149,3 +150,17 @@ def generator_input(input_file, batch_size=2):
         for i in range(0,len(input_data),batch_size):
             x = input_data[i:min(i+batch_size, len(input_data))]
             yield x, x
+
+
+def mortion_property_value(*data):
+    for d in data:
+        if type(d['value']) is str:
+            try:
+                d['value'] = ujson.loads(d['value'])
+                if type(d['value']) is list and d['value']:
+                    yield d
+                else:
+                    print('empty {}'.format(d))
+                    continue
+            except ValueError as e:
+                print(e, file=sys.stderr)

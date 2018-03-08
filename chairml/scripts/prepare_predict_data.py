@@ -4,7 +4,8 @@ from libs.evt import *
 import os
 import ujson
 import pickle
-from trainer.model import transform, normalize, MAX_LEN
+import numpy as np
+from trainer.model import transform, normalize, MAX_LEN,mortion_property_value
 
 
 config = dict(host=os.getenv('EVT_HOST'),

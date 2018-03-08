@@ -2,10 +2,8 @@ import asyncio
 from urllib.parse import unquote_plus
 import aiohttp
 import uvloop
-import ujson
 import sys
-import numpy as np
-from keras.preprocessing import  sequence
+
 # -*- coding: utf-8 -*-
 
 ATTEMPTS = 6
@@ -87,20 +85,6 @@ def get_property_events(host, api_key, thng_id, thng_prop):
     finally:
         loop.close()
     return data
-
-
-def mortion_property_value(*data):
-    for d in data:
-        if type(d['value']) is str:
-            try:
-                d['value'] = ujson.loads(d['value'])
-                if type(d['value']) is list and d['value']:
-                    yield d
-                else:
-                    print('empty {}'.format(d))
-                    continue
-            except ValueError as e:
-                print(e, file=sys.stderr)
 
 
 def evt_training_data(host, api_key, thng_prop, collection_id):
