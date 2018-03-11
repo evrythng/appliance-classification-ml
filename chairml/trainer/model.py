@@ -16,30 +16,21 @@
 # ==============================================================================
 
 """Implements the Keras Sequential model."""
-import sys
 
-import keras
-import pandas as pd
-import numpy as np
 import ujson
-from keras import backend as K
-from keras import layers, models
-from keras.utils import np_utils
-from keras.backend import relu, softmax
-from keras.models import Sequential, Model
-from keras import regularizers
-from keras.layers import Dropout, Input, Conv1D, MaxPool1D, GlobalMaxPooling1D, Dense
-from keras.preprocessing import sequence
-import pickle
-# Python2/3 compatibility imports
-from six.moves.urllib import parse as urlparse
-# from builtins import range
 
+import numpy as np
 import tensorflow as tf
-from sklearn.preprocessing import MinMaxScaler
+from keras import backend as K
+from keras.layers import Input, Conv1D
+from keras.models import Model
 from tensorflow.python.saved_model import builder as saved_model_builder
 from tensorflow.python.saved_model import tag_constants, signature_constants
 from tensorflow.python.saved_model.signature_def_utils_impl import predict_signature_def
+
+
+# Python2/3 compatibility imports
+# from builtins import range
 
 
 # # csv columns in the input file
@@ -67,42 +58,8 @@ from tensorflow.python.saved_model.signature_def_utils_impl import predict_signa
 #     list(zip(*CATEGORICAL_COLS))[0] + CONTINUOUS_COLS + (LABEL_COLUMN,))
 #
 
-MAX_LEN = 40
-CHANNELS = 3
-INPUT_SHAPE = (CHANNELS,MAX_LEN)
 
 
-def fit_std_scaler(train_data):
-    mean = train_data.mean(axis=0)
-    train_data -= mean
-    std = train_data.std(axis=0)
-    return dict(std=std, mean=mean)
-
-
-def fit_min_max_scaler(train_data):
-    return dict(min=train_data.min(axis=0), max=train_data.max(axis=0))
-
-
-def transform_std(data,fit_params):
-    return (data - fit_params['mean'])/ fit_params['std']
-
-
-def transform_min_max(data, fit_params):
-    return (data - fit_params['min']) / (fit_params['max'] - fit_params['min'])
-
-
-def fit_training_data(train_data, file):
-    p = fit_min_max_scaler(train_data)
-    with open(file,'wb') as fd:
-        print('Saving scale to {file}'.format(file=file))
-        pickle.dump(p, fd)
-    return p
-
-
-normalize = transform_min_max
-
-def transform(data, maxlen=40):
-    return [sequence.pad_sequences(list(zip(*d)), padding='post',truncating='post', dtype='float',maxlen=maxlen) for d in data]
 
 
 def compile_model(model):
@@ -152,15 +109,3 @@ def generator_input(input_file, batch_size=2):
             yield x, x
 
 
-def mortion_property_value(*data):
-    for d in data:
-        if type(d['value']) is str:
-            try:
-                d['value'] = ujson.loads(d['value'])
-                if type(d['value']) is list and d['value']:
-                    yield d
-                else:
-                    print('empty {}'.format(d))
-                    continue
-            except ValueError as e:
-                print(e, file=sys.stderr)

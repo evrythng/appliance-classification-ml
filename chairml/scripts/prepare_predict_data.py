@@ -5,7 +5,7 @@ import os
 import ujson
 import pickle
 import numpy as np
-from trainer.model import transform, normalize, MAX_LEN,mortion_property_value
+from trainer.preprocess import transform, transform_min_max_scaling as normalize_features, MAX_LEN,motion_property_value
 
 
 config = dict(host=os.getenv('EVT_HOST'),
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     data = get_property_events(**config)
 
     # Deserialize json 'value' paylod
-    data = mortion_property_value(*data)
+    data = motion_property_value(*data)
 
     # Create a 3d array with (property event, step, sensor vector)
     data = map(lambda x: x['value'], data)
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     # Normalize data
     with open(os.getenv('FIT_PARAMS'),'rb') as fd:
         fit_params = pickle.load(fd)
-    data = map(lambda x: normalize(np.array(x)[:,1:], fit_params), data)
+    data = map(lambda x: normalize_features(np.array(x)[:,1:], fit_params), data)
 
     # Pad the data so that each property event has the same shape
     data = transform(data, MAX_LEN)

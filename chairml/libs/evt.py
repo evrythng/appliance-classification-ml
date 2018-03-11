@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
+
 import asyncio
 from urllib.parse import unquote_plus
 import aiohttp
 import uvloop
 import sys
 
-# -*- coding: utf-8 -*-
 
 ATTEMPTS = 6
 
@@ -50,14 +51,15 @@ async def main(url, api_key, data):
                     print(f'Downloaded {len(data)}')
 
 
-def get_thngs(host, api_key,collection_id=None):
+def get_thngs(host, api_key, collection_id=None):
     data = []
     loop = None
     try:
         loop = uvloop.new_event_loop()
         asyncio.set_event_loop(loop)
         if collection_id:
-            url = "https://{host}/collections/{collection_id}/thngs?perPage=100".format(host=host,collection_id=collection_id)
+            url = "https://{host}/collections/{collection_id}/thngs?perPage=100".format(host=host,
+                                                                                        collection_id=collection_id)
         else:
             url = "https://{host}/thngs?perPage=100".format(host=host)
         loop.run_until_complete(main(url, api_key, data))
@@ -66,9 +68,6 @@ def get_thngs(host, api_key,collection_id=None):
     finally:
         loop.close()
     return data
-
-
-
 
 
 def get_property_events(host, api_key, thng_id, thng_prop):
@@ -88,7 +87,6 @@ def get_property_events(host, api_key, thng_id, thng_prop):
 
 
 def evt_training_data(host, api_key, thng_prop, collection_id):
-    for thng in get_thngs(host, api_key,collection_id):
+    for thng in get_thngs(host, api_key, collection_id):
         if thng_prop in thng['properties']:
             yield thng['id'], get_property_events(host, api_key, thng['id'], thng_prop)
-
