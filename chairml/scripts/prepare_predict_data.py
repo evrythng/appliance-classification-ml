@@ -5,7 +5,7 @@ import os
 import ujson
 import pickle
 import numpy as np
-from trainer.preprocess import transform, transform_min_max_scaling as normalize_features, MAX_LEN,motion_property_value
+from trainer.preprocess import transform, transform_min_max_scaling as normalize_features, MAX_LEN,vibration_property_value
 
 
 config = dict(host=os.getenv('EVT_HOST'),
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     data = get_property_events(**config)
 
     # Deserialize json 'value' paylod
-    data = motion_property_value(*data)
+    data = vibration_property_value(*data)
 
     # Create a 3d array with (property event, step, sensor vector)
     data = map(lambda x: x['value'], data)
