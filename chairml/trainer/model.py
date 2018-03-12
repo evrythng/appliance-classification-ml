@@ -81,7 +81,7 @@ def to_savedmodel(model, export_path):
     builder = saved_model_builder.SavedModelBuilder(export_path)
 
     # https://cloud.google.com/ml-engine/docs/v1/predict-request#multiple-input-tensors
-    signature = predict_signature_def(inputs={'instances': model.inputs[0]},
+    signature = predict_signature_def(inputs={'inputs': model.inputs[0]},
                                       outputs={'predictions': model.outputs[0]})
     print(signature)
 

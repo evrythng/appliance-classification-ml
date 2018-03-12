@@ -58,7 +58,7 @@ def transform(data, maxlen=40):
             in data]
 
 
-def vibration_property_value(*data):
+def vibration_property(*data):
     for d in data:
         if type(d['value']) is str:
             try:

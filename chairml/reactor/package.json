@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jsnumpy": "^1.1.6"
+    "numjs": "^0.15.1",
+    "requests": "^0.2.2",
+    "superagent": "^3.8.2"
   }
 }
