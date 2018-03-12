@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jskit-learn": "^0.9.4",
-    "numjs": "^0.15.1"
+    "jsnumpy": "^1.1.6"
   }
 }
