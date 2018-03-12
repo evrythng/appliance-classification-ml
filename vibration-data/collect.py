@@ -9,11 +9,14 @@ import requests
 import json
 import os.path
 
+x_bundle_file = 'x_bundle.json'
+y_bundle_file = 'y_bundle.json'
 x_train_file = 'x_train.json'
 y_train_file = 'y_train.json'
+x_val_file = 'x_val.json'
+y_val_file = 'y_val.json'
 
-
-def get_training_data(evrythng_url,collection_id,property_name,trusted_api_key):
+def get_training_data(evrythng_url, collection_id, property_name, trusted_api_key):
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
@@ -79,13 +82,13 @@ def get_untrained_model(len):
     return model
 
 
-if not os.path.isfile(x_train_file) or not os.path.isfile(y_train_file):
-    x_training, y_training = get_training_data(**json.load(open('evt_config.json')))
-    json.dump(x_training.tolist(), open(x_train_file, 'w'))
-    json.dump(y_training.tolist(), open(y_train_file, 'w'))
+if not os.path.isfile(x_bundle_file) or not os.path.isfile(y_bundle_file):
+    x_bundle, y_bundle = get_training_data(**json.load(open('evt_config.json')))
+    json.dump(x_bundle.tolist(), open(x_bundle_file, 'w'))
+    json.dump(y_bundle.tolist(), open(y_bundle_file, 'w'))
 else:
-    x_training = np.array(json.load(open(x_train_file)))
-    y_training = np.array(json.load(open(y_train_file)))
+    x_bundle = np.array(json.load(open(x_bundle_file)))
+    y_bundle = np.array(json.load(open(y_bundle_file)))
 
 
 '''
@@ -130,7 +133,7 @@ for i in range(k):
 print('{} mean: {}'.format(all_scores, np.mean(all_scores)))
 '''
 
-total_num = np.shape(y_training)[0]
+total_num = np.shape(y_bundle)[0]
 train_ratio = .85
 val_ratio = .1
 
@@ -138,18 +141,23 @@ train_num = int(total_num * .85)
 val_num = int(total_num * .1)
 test_num = total_num - (train_num + val_num)
 
-x_train = x_training[:train_num]
-y_train = y_training[:train_num]
-x_val = x_training[train_num:(train_num+val_num)]
-y_val = y_training[train_num:(train_num+val_num)]
-x_test = x_training[(train_num+val_num):]
-y_test = y_training[(train_num+val_num):]
+x_train = x_bundle[:train_num]
+y_train = y_bundle[:train_num]
+x_val = x_bundle[train_num:(train_num+val_num)]
+y_val = y_bundle[train_num:(train_num+val_num)]
+x_test = x_bundle[(train_num+val_num):]
+y_test = y_bundle[(train_num+val_num):]
+
+json.dump(x_train.tolist(), open(x_train_file, 'w'))
+json.dump(y_train.tolist(), open(y_train_file, 'w'))
+json.dump(x_val.tolist(), open(x_val_file, 'w'))
+json.dump(y_val.tolist(), open(y_val_file, 'w'))
 
 print('x_train: {}, y_train: {}'.format(np.shape(x_train), np.shape(y_train)))
 print('x_val: {}, y_val: {}'.format(np.shape(x_val), np.shape(y_val)))
 print('x_test: {}, y_test: {}'.format(np.shape(x_test), np.shape(y_test)))
 
-model = get_untrained_model(np.shape(x_training)[1])
+model = get_untrained_model(np.shape(x_bundle)[1])
 history = model.fit(x_train, y_train,
                     epochs=20,
                     batch_size=128,
