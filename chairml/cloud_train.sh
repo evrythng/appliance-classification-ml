@@ -11,14 +11,14 @@ source ../evt_config/google_cloud.conf
 
 
 export TRAIN_STEPS=100
-export EPOCS=4000
+export EPOCS=200
 
 
 gcloud ml-engine jobs submit training $JOB_NAME \
                                     --stream-logs \
                                     --config config.yaml \
                                     --runtime-version 1.4 \
-                                    --job-dir $JOB_DIR_GC \
+                                    --job-dir $JOB_DIR \
                                     --package-path trainer \
                                     --module-name trainer.task \
                                     --region us-central1 \

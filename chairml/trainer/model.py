@@ -22,11 +22,11 @@ import ujson
 import numpy as np
 import tensorflow as tf
 from keras import backend as K
-from keras.layers import Input, Conv1D
-from keras.models import Model
+from keras.layers import Input, Conv1D,GlobalMaxPooling1D,Dense, MaxPool1D,Dropout
+from keras.models import Model, Sequential
 from tensorflow.python.saved_model import builder as saved_model_builder
 from tensorflow.python.saved_model import tag_constants, signature_constants
-from tensorflow.python.saved_model.signature_def_utils_impl import predict_signature_def
+from tensorflow.python.saved_model.signature_def_utils_impl import predict_signature_def, classification_signature_def
 
 
 # Python2/3 compatibility imports
@@ -63,16 +63,22 @@ from tensorflow.python.saved_model.signature_def_utils_impl import predict_signa
 
 
 def compile_model(model):
-    model.compile(optimizer='adadelta', loss='mse',metrics=['accuracy'])
+    model.compile(optimizer='rmsprop',
+                  loss='binary_crossentropy',
+                  metrics=['accuracy'])
     return model
 
 
 def model_fn(input_shape, hidden_dim):
-    input_layer = Input(shape=input_shape)
-    encoded = Conv1D(hidden_dim,1,activation='tanh')(input_layer)
-    encoded = Conv1D(hidden_dim,1,activation='relu')(encoded)
-    decoded = Conv1D(input_shape[-1],1,activation='relu')(encoded)
-    return compile_model(Model(inputs=input_layer, outputs=decoded))
+    model = Sequential()
+    model.add(Conv1D(hidden_dim, 2, activation='relu', input_shape=input_shape))
+    # model.add(MaxPool1D(2))
+    model.add(Conv1D(hidden_dim, 2, activation='relu'))
+    # model.add(MaxPool1D(2))
+    # model.add(Conv1D(hidden_dim, 2, activation='relu'))
+    model.add(GlobalMaxPooling1D())
+    model.add(Dense(1, activation='sigmoid'))  # SGD(lr=0.01, clipvalue=0.5) #adadelta
+    return compile_model(model)
 
 
 def to_savedmodel(model, export_path):
@@ -81,9 +87,9 @@ def to_savedmodel(model, export_path):
     builder = saved_model_builder.SavedModelBuilder(export_path)
 
     # https://cloud.google.com/ml-engine/docs/v1/predict-request#multiple-input-tensors
-    signature = predict_signature_def(inputs={'inputs': model.inputs[0]},
+    signature = predict_signature_def(inputs={'instances': model.inputs[0]},
                                       outputs={'predictions': model.outputs[0]})
-    print(signature)
+
 
     with K.get_session() as sess:
         builder.add_meta_graph_and_variables(
@@ -101,11 +107,13 @@ def generator_input(input_file, batch_size=2):
     """
 
     while True:
-        input_data = np.array(ujson.load(tf.gfile.Open(input_file[0], 'rb')))
-
-
+        with tf.gfile.Open(input_file[0], 'rb') as fd:
+            data = ujson.load(fd)
+        input_data, labels = data
+        input_data, labels = np.array(input_data), np.array(labels)
         for i in range(0,len(input_data),batch_size):
             x = input_data[i:min(i+batch_size, len(input_data))]
-            yield x, x
+            y = labels[i:min(i+batch_size, len(input_data))]
+            yield x, y
 
 

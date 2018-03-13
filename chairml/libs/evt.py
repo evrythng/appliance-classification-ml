@@ -5,7 +5,7 @@ from urllib.parse import unquote_plus
 import aiohttp
 import uvloop
 import sys
-
+import requests
 
 ATTEMPTS = 6
 
@@ -70,6 +70,26 @@ def get_thngs(host, api_key, collection_id=None):
     return data
 
 
+async def get_thng(api_key, thng_id):
+    headers = {"Authorization": api_key, "Content-Type": "application/json"}
+    async with aiohttp.ClientSession() as session:
+
+        async with session.get(
+                url="https://api.evrythng.com/thngs/%s" % thng_id,
+                headers=headers) as resp:
+
+            try:
+                data = await resp.json()
+
+                if 200 <= resp.status < 300:
+                    return data
+            except aiohttp.ClientConnectorError as e:
+                print(e, file=sys.stderr)
+            except TimeoutError as e:
+                print(e, file=sys.stderr)
+    return []
+
+
 def get_property_events(host, api_key, thng_id, thng_prop):
     loop = None
     data = []
@@ -85,6 +105,30 @@ def get_property_events(host, api_key, thng_id, thng_prop):
         loop.close()
     return data
 
+
+def get_properties(host, api_key, thng_id, thng_property, begin, end):
+    data = []
+    loop = None
+    try:
+        loop = uvloop.new_event_loop()
+        asyncio.set_event_loop(loop)
+        url = f"https://{host}/thngs/{thng_id}/properties/{thng_property}?filter=timestamp={begin}..{end}&perPage=100"
+
+        loop.run_until_complete(main(url, api_key, data))
+    except aiohttp.client_exceptions.ClientConnectorError as e:
+        print(e, file=sys.stderr)
+    finally:
+        loop.close()
+    return data
+
+def list_properties(host, api_key, thng_id):
+    res = requests.get(f"https://{host}/thngs/{thng_id}",
+                       headers={"Authorization": api_key, "Content-Type": "application/json"})
+    thng = res.json()
+    if thng:
+        return thng['properties']
+    else:
+        raise Exception(f'thng {thng_id} not found')
 
 def evt_training_data(host, api_key, thng_prop, collection_id):
     for thng in get_thngs(host, api_key, collection_id):

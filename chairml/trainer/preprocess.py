@@ -5,9 +5,10 @@ import sys
 import ujson
 
 MAX_LEN = 40
-CHANNELS = 3
-INPUT_SHAPE = (CHANNELS, MAX_LEN)
-
+CHANNELS = 4
+INPUT_SHAPE = [MAX_LEN,CHANNELS][::-1]
+HIDDEN_DIM=32
+CLASSES = 2
 
 def fit_training_data_decorator(fit_fn):
     def call(train_data, file):
@@ -28,6 +29,7 @@ def normalize_features_decorator(transform_fn):
     return call
 
 
+@fit_training_data_decorator
 def fit_std_scaler(train_data):
     mean = train_data.mean(axis=0)
     train_data -= mean
@@ -35,25 +37,25 @@ def fit_std_scaler(train_data):
     return dict(std=std, mean=mean)
 
 
-@fit_training_data_decorator
+
 def fit_min_max_scaler(train_data):
     return dict(min=train_data.min(axis=0), max=train_data.max(axis=0))
 
 
-def transform_standardization(data, fit_params):
+@normalize_features_decorator
+def transform_std(data, fit_params):
     return (data - fit_params['mean']) / fit_params['std']
 
 
-@normalize_features_decorator
 def transform_min_max_scaling(data, fit_params):
     return (data - fit_params['min']) / (fit_params['max'] - fit_params['min'])
 
 
-def fit_meean_normalization(train_data):
+def fit_mean_normalization(train_data):
     return dict(min=train_data.min(axis=0), max=train_data.max(axis=0))
 
 
-def transform(data, maxlen=40):
+def padding(data, maxlen=40):
     return [sequence.pad_sequences(list(zip(*d)), padding='post', truncating='post', dtype='float', maxlen=maxlen) for d
             in data]
 

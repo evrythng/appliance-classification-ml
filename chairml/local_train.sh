@@ -6,27 +6,20 @@ python setup.py build
 python setup.py install
 
 
+source ../evt_config/google_cloud.conf
 
-MOTION_DATA='data'
-JOB_DIR=chairml_keras
-TRAIN_FILE=$MOTION_DATA/train.json
-EVAL_FILE=$MOTION_DATA/eval.json
+rm -rf $OUTPUT_DIR
 
-
-rm -rf $JOB_DIR
-
-export TRAIN_STEPS=100
-export EPOCS=400
+export TRAIN_STEPS=2
+export EPOCS=4
 
 
-gcloud ml-engine local train --package-path trainer \
+gcloud ml-engine local train \
+                             --job-dir $OUTPUT_DIR \
+                             --package-path trainer \
                              --module-name trainer.task \
                              -- \
                              --train-files $TRAIN_FILE \
                              --eval-files $EVAL_FILE \
-                             --job-dir $JOB_DIR \
-                             --distributed \
                              --train-steps $TRAIN_STEPS \
-                             --num-epochs $EPOCS \
-                             --config config.yaml \
-                             --runtime-version 1.4
+                             --num-epochs $EPOCS

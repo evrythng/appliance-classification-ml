@@ -18,10 +18,10 @@
 
 import argparse
 import glob
-import json
 import os
 
 import trainer.model as model
+from trainer import preprocess
 
 from keras.callbacks import TensorBoard, Callback, ModelCheckpoint
 from keras.models import load_model
@@ -94,7 +94,7 @@ def dispatch(train_files,
              eval_num_epochs,
              num_epochs,
              checkpoint_epochs):
-  chair_model = model.model_fn(model.INPUT_SHAPE, 32)
+  chair_model = model.model_fn(preprocess.INPUT_SHAPE, preprocess.HIDDEN_DIM)
 
   try:
     os.makedirs(job_dir)
@@ -112,8 +112,7 @@ def dispatch(train_files,
       checkpoint_path,
       monitor='val_loss',
       verbose=1,
-      period=checkpoint_epochs,
-      mode='max')
+      period=checkpoint_epochs)
 
   # Continuous eval callback
   evaluation = ContinuousEval(eval_frequency,

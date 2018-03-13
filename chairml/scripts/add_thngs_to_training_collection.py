@@ -17,6 +17,5 @@ if __name__ == '__main__':
             sys.exit(1)
         thngs.append(thng_id)
 
-    print(thngs)
     res = requests.put("https://{host}/collections/{collection_id}/thngs".format(**config),
                         headers={"Authorization": config['api_key'], "Content-Type": "application/json"}, json=thngs)

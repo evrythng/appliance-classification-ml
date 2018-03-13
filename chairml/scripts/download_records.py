@@ -4,6 +4,7 @@
 from libs.evt import evt_training_data
 import os
 import ujson
+
 from trainer.preprocess import vibration_property
 
 if __name__ == '__main__':
@@ -22,4 +23,13 @@ if __name__ == '__main__':
                         dataset[thng] = []
                     dataset[thng].append(e)
 
-    ujson.dump(dataset,open(os.getenv('RAW_DATA'), 'w'),ensure_ascii=True)
+
+    raw_data = os.getenv('RAW_DATA')
+    datasets = {}
+    if os.path.exists(raw_data):
+        with open(raw_data) as fd:
+            datasets = ujson.load(fd)
+
+    datasets[config['collection_id']] = dataset
+    with open(raw_data,'w') as fd:
+        ujson.dump(datasets,fd, ensure_ascii=True)

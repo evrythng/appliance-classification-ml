@@ -69,19 +69,28 @@ function padSequence(data, maxlen) {
 // @filter(onThngPropertiesChanged) propertyChangeNew.magnitude=*
 function onThngPropertiesChanged(event) {
     const propertyUpdates = JSON.parse(event.changes.magnitude.newValue);
-    let data = vibrationProperty(propertyUpdates, [1, 2, 3]);
+    let data = vibrationProperty(propertyUpdates, [0, 1, 2, 3]);
+    const f = transformFnDecorator(standardization, {"std":[37.4726948414,0.5668747745,0.4292762528,0.5470030048],"mean":[28.392496191,0.1113913954,-0.0082839365,0.6383515595]});
+    data = f(data);
     data = padSequence(data, 40);
     data = np.transpose(data);
     let inputs = {"instances": [{instances: data}]};
     request
         .post("https://ml.googleapis.com/v1/projects/connected-machine-learning/models/keras_chairml/versions/v1:predict")
         .send(inputs) // sends a JSON post body
-        .set("Authorization", "Bearer ya29.Glx9BbmshA8xXs1Vuw181wdYVC3wQz0ke5ZOQ3SWbugdt5AK6l7IvQ7O4uVLdrIa6lTxZG5Qmq7oLzGVyvvoSgRddv-MQhBkGr0MA8cibWtIv15xUaNbPE90H5VoTg")
+        .set("Authorization", "Bearer ya29.Glx9BXxzcw820YwfYBBRtVxMsGg3F-zoXSMx-niOjXmGdd8ksTHaLD_lyes5HpgHkKA0OriUpq55WSYY0YwmacgBKTpLEIgLFKqs31ilhYmPAPs02rUuv0oyH4GXRA")
         .set("Content-Type", "application/json")
         .end((err, res) => {
-            logger.debug(JSON.stringify(res.body));
-            done();
+            console.log(JSON.stringify(res.body));
+            // app.action('_eventClassification').create({
+            //     thng: event.thng.id,
+            //     customFields: JSON.stringify(res.body)
+            // }).then(data=>{
+            //     done();
+            // }).catch(err=>{
+            //     logger.error(err)
+            // });
         });
 }
 
-
+onThngPropertiesChanged(require('./event.json'))
