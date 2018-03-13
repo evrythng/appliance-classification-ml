@@ -6,18 +6,7 @@ python setup.py build
 python setup.py install
 
 
-export BUCKET_NAME=connected-machine-learning
-
-# set the same job name/id in cloud_deploy.sh
-export JOB_NAME=chair_single_14
-export JOB_DIR="gs://$BUCKET_NAME/$JOB_NAME"
-
-export MOTION_DATA='data'
-export TRAIN_FILE=$MOTION_DATA/train.json
-export EVAL_FILE=$MOTION_DATA/eval.json
-
-export GCS_TRAIN_FILE="gs://$BUCKET_NAME/$TRAIN_FILE"
-export GCS_EVAL_FILE="gs://$BUCKET_NAME/$EVAL_FILE"
+source ../evt_config/google_cloud.conf
 
 
 
@@ -29,7 +18,7 @@ gcloud ml-engine jobs submit training $JOB_NAME \
                                     --stream-logs \
                                     --config config.yaml \
                                     --runtime-version 1.4 \
-                                    --job-dir $JOB_DIR \
+                                    --job-dir $JOB_DIR_GC \
                                     --package-path trainer \
                                     --module-name trainer.task \
                                     --region us-central1 \

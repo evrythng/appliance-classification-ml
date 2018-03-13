@@ -1,5 +1,5 @@
 {
-  "name": "integrator",
+  "name": "reactor",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -9,8 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "numjs": "^0.15.1",
-    "requests": "^0.2.2",
+    "jsnumpy": "^1.1.6",
     "superagent": "^3.8.2"
   }
 }

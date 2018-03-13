@@ -6,25 +6,25 @@ source venv/bin/activate
 python setup.py build
 python setup.py install
 
-export EVT_API_KEY=
-export EVT_HOST=api.evrythng.com
-export EVT_THNG_PROPERTY=magnitude
-export EVT_COLLECTION_ID=UHk8nhmNeD8aQKRwahshfgTe
+source ../evt_config/evt_predict.conf
+source ../evt_config/google_cloud.conf
 
-export MOTION_DATA=data
-export JOB_DIR=chairml_keras
-export TRAIN_FILE=$MOTION_DATA/train.json
-export EVAL_FILE=$MOTION_DATA/eval.json
-export RAW_DATA=$MOTION_DATA/rawdata.json
-export FIT_PARAMS=$MOTION_DATA/fit_params.p
 rm -rf $MOTION_DATA
-
-
 mkdir $MOTION_DATA
 
 ./scripts/download_records.py
+
+if [ $? -eq 1 ]
+then
+    exit 1
+fi
+
 ./scripts//prepare_training_data.py
 
+if [ $? -eq 1 ]
+then
+    exit 1
+fi
 
 export BUCKET_NAME=connected-machine-learning
 export GCS_TRAIN_FILE="gs://$BUCKET_NAME/$TRAIN_FILE"

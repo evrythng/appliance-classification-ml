@@ -170,3 +170,6 @@ build/
 *.egg*
 
 chairml/venv/
+
+package-lock.json
+reactor/event.json

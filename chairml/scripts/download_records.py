@@ -4,7 +4,7 @@
 from libs.evt import evt_training_data
 import os
 import ujson
-from trainer.preprocess import vibration_property_value
+from trainer.preprocess import vibration_property
 
 if __name__ == '__main__':
     config = dict(host=os.getenv('EVT_HOST'),
@@ -15,7 +15,7 @@ if __name__ == '__main__':
     thngs_properties = dict(evt_training_data(**config))
     dataset = {}
     for thng in thngs_properties:
-        for events in (vibration_property_value(x) for x in thngs_properties[thng]):
+        for events in (vibration_property(x) for x in thngs_properties[thng]):
             for e in events:
                 if len(e['value']) >= 2:
                     if thng not in dataset:

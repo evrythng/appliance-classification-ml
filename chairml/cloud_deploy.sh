@@ -2,15 +2,8 @@
 
 
 
+source ../evt_config/google_cloud.conf
 
-export BUCKET_NAME=connected-machine-learning
-
-export JOB_NAME=chair_single_14
-export JOB_DIR="gs://$BUCKET_NAME/$JOB_NAME"
-
-
-
-MODEL_NAME=keras_chairml
 
 gcloud ml-engine models create $MODEL_NAME --regions=us-central1
 

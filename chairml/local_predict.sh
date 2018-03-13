@@ -7,10 +7,8 @@ python setup.py build
 python setup.py install
 
 
-export JOB_DIR=chairml_keras
+source ../evt_config/google_cloud.conf
 
-export MOTION_DATA=data
-export PREDICT_FILE=$MOTION_DATA/predict.json
 
 
 gcloud ml-engine local predict  \
