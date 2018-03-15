@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
+source venv/bin/activate
 
+source ../evt_config/google_cloud.env
 
-source ../evt_config/google_cloud.conf
-
-gcloud ml-engine predict --model $MODEL_NAME --json-instances $PREDICT_FILE
+./scripts/cloud_predict.py

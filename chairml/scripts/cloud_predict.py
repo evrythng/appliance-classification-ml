@@ -51,7 +51,8 @@ credentials = GoogleCredentials.get_application_default()
 # Make the call.
 try:
     with open(os.getenv('PREDICT_FILE')) as fd:
-        print(predict_json('connected-machine-learning','keras_chairml',ujson.load(fd)))
+        for i in ujson.load(fd):
+            print(predict_json('connected-machine-learning','keras_chairml',i))
 
 except errors.HttpError as err:
     # Something went wrong, print out some information.

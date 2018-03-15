@@ -4,6 +4,7 @@ from setuptools import setup
 
 setup(
     name='trainer',
+    author='joel@evrythng.com',
     version='0.3',
     packages=find_packages(),
     package_dir={".": "libs"},

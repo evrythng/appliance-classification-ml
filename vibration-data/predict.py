@@ -5,7 +5,7 @@ import paho.mqtt.client as mqtt
 import numpy as np
 import json
 
-with open('evt_config/predict_config.json') as fd:
+with open('../evt_config/predict_config.env') as fd:
     config = json.load(open(fd))
     thng_id = config['thng_id']
     device_api_key = config['device_api_key']

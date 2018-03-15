@@ -1,5 +1,3 @@
-print = console.log
-
 function transformFnDecorator(fn, fitParams) {
     function call(data) {
         let out = [];
@@ -66,3 +64,4 @@ module.exports.vibrationProperty = vibrationProperty;
 module.exports.transformFnDecorator = transformFnDecorator;
 module.exports.minMaxScaling = minMaxScaling;
 module.exports.padSequence = padSequence;
+module.exports.standardization = standardization;

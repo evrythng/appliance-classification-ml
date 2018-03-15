@@ -1,140 +1,37 @@
-### Predicting income with the Census Income Dataset using Keras
+# Setup
 
-This is the Open Source Keras version of the Census sample. The sample runs both as a
-standalone Keras code and on Cloud ML Engine.
+The folder evt_config contains sensitive data. Files in this folder will not be pushed to git. chairml contains all the files to train and the deploy model. chairml is the working directory for this project.
 
-## Download the data
-The [Census Income Data
-Set](https://archive.ics.uci.edu/ml/datasets/Census+Income) that this sample
-uses for training is hosted by the [UC Irvine Machine Learning
-Repository](https://archive.ics.uci.edu/ml/datasets/). We have hosted the data
-on Google Cloud Storage in a slightly cleaned form:
-
- * Training file is `adult.data.csv`
- * Evaluation file is `adult.test.csv`
+## Local environment and EVT project
+1. `./setup.sh` to create the Python environment the first time this command is executed or update the environment. You must have Python 3 installed.
+2. In our EVT account, create a project and an application. The application will contain a reactor script that provides the link between EVT and Google's CloudML. Also create an action type `_eventClassification`. The reactor script will publish the results from cloudML using this action.
+3. Add all the necessary identifiers and keys in [../evt_config](../evt_config). It Contains:  
+	- application_default_credentials.json: Gogole cloud credentials
+	- evt_predict.env: A test thng for post-training predictions
+	- google_cloud.env: All config paramters (Google and EVT) directly related to the ML workflow
+	- One or more training collections, which is called by `./prepare_training_data.sh`. E.g.
 
 ```
-TRAIN_FILE=adult.data.csv
-EVAL_FILE=adult.test.csv
+# download generated training data
+source ../evt_config/evt_training_generated.env
+./scripts/download_records.py
 
-GCS_TRAIN_FILE=gs://cloudml-public/census/data/adult.data.csv
-GCS_EVAL_FILE=gs://cloudml-public/census/data/adult.test.csv
-
-gsutil cp $GCS_TRAIN_FILE $TRAIN_FILE
-gsutil cp $GCS_EVAL_FILE $EVAL_FILE
+# download training data from real pycom devices
+source ../evt_config/evt_training_appliance.conf
+./scripts/download_records.py
 ```
 
-## Virtual environment
 
-Virtual environments are strongly suggested, but not required. Installing this
-sample's dependencies in a new virtual environment allows you to run the sample
-without changing global python packages on your system.
+## Model training and testing locally
 
-There are two options for the virtual environments:
+1. Download data: `./prepare_training_data.sh` and `./prepare_prediction_sample.sh`
+2. Train the model locally `./local_train.sh`. If you see ERROR: (gcloud.ml-engine.local.predict) RuntimeError: Bad magic number in .pyc file, that's cloud ml not using python 3.5, but 2.7 instead. I don't know why [config.yaml](config.yaml) doesn't work for the local option.
+3. Use the model with an untested thng `./local_predict.sh`
 
- * Install [Virtual](https://virtualenv.pypa.io/en/stable/) env
-   * Create virtual environment `virtualenv census_keras`
-   * Activate env `source census_keras/bin/activate`
- * Install [Miniconda](https://conda.io/miniconda.html)
-   * Create conda environment `conda create --name census_keras python=2.7`
-   * Activate env `source activate census_keras`
-
-
-## Install dependencies
-
- * Install [gcloud](https://cloud.google.com/sdk/gcloud/)
- * Install the python dependencies. `pip install --upgrade -r requirements.txt`
-
-## Using local python
-
-You can run the Keras code locally
-
-```
-JOB_DIR=census_keras
-TRAIN_STEPS=2000
-python -m trainer.task --train-files $TRAIN_FILE \
-                       --eval-files $EVAL_FILE \
-                       --job-dir $JOB_DIR \
-                       --train-steps $TRAIN_STEPS
-```
-
-## Training using gcloud local
-
-You can run Keras training using gcloud locally
-
-```
-JOB_DIR=census_keras
-TRAIN_STEPS=200
-gcloud ml-engine local train --package-path trainer \
-                             --module-name trainer.task \
-                             -- \
-                             --train-files $TRAIN_FILE \
-                             --eval-files $EVAL_FILE \
-                             --job-dir $JOB_DIR \
-                             --train-steps $TRAIN_STEPS
-```
-
-## Prediction using gcloud local
-
-You can run prediction on the SavedModel created from Keras HDF5 model
-
-```
-python preprocess.py sample.json
-```
-
-```
-gcloud ml-engine local predict --model-dir=$JOB_DIR/export \
-                               --json-instances sample.json
-```
-
-## Training using Cloud ML Engine
-
-You can train the model on Cloud ML Engine
-
-```
-gcloud ml-engine jobs submit training $JOB_NAME \
-                                    --stream-logs \
-                                    --runtime-version 1.4 \
-                                    --job-dir $JOB_DIR \
-                                    --package-path trainer \
-                                    --module-name trainer.task \
-                                    --region us-central1 \
-                                    -- \
-                                    --train-files $GCS_TRAIN_FILE \
-                                    --eval-files $GCS_EVAL_FILE \
-                                    --train-steps $TRAIN_STEPS
-```
-
-## Prediction using Cloud ML Engine
-
-You can perform prediction on Cloud ML Engine by following the steps below.
-Create a model on Cloud ML Engine
-
-```
-gcloud ml-engine models create keras_model --regions us-central1
-```
-
-Export the model binaries
-
-```
-MODEL_BINARIES=$JOB_DIR/export
-```
-
-Deploy the model to the prediction service
-
-```
-gcloud ml-engine versions create v1 --model keras_model --origin $MODEL_BINARIES --runtime-version 1.2
-```
-
-Create a processed sample from the data
-
-```
-python preprocess.py sample.json
-
-```
-
-Run the online prediction
-
-```
-gcloud ml-engine predict --model keras_model --version v1 --json-instances sample.json
-```
+## Model training and testing using Google CloudML
+1. If you haven't downloaded the training data, execute `./prepare_training_data.sh` and `./prepare_prediction_sample.sh`.
+2. Before every iteration, increment `JOB_NAME` in [../evt_config/google_cloud.env](../evt_config/google_cloud.env).
+3. Train in the cloud `./cloud_train.sh`
+4. Deploy the model `./cloud_deploy.ch`
+5. Make sure predictions make sense `./cloud_predict.sh`
+6. And deploy a new reactor script with the latest feature normalisation parameters `./deploy_to_evt.sh`. If this deployment was successful, you will see `_eventClassification` actions when a `magnitude` property changes.

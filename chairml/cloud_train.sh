@@ -6,7 +6,7 @@ python setup.py build
 python setup.py install
 
 
-source ../evt_config/google_cloud.conf
+source ../evt_config/google_cloud.env
 
 
 

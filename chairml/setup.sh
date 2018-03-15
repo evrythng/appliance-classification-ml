@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ../evt_config/google_cloud.conf
+source ../evt_config/google_cloud.env
 
 if [ ! -d venv ]
     then
@@ -9,14 +9,16 @@ if [ ! -d venv ]
         source venv/bin/activate
         echo "Insalling packages"
         pip install -r requirements.txt
-
+        echo "Making all files in scripts executable"
+        chmod 755 scripts/*
     else
         echo "Your environment is already setup"
-        source venv/bin/activate
         echo "Removing build files"
         rm -rf build dist trainer.egg-info
         echo "Removing model checkpoints in $OUTPUT_DIR"
         rm $OUTPUT_DIR
+        source venv/bin/activate
+        python setup.py clean
 fi
 
 echo "Building the project"

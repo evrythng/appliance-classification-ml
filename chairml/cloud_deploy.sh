@@ -2,7 +2,7 @@
 
 
 
-source ../evt_config/google_cloud.conf
+source ../evt_config/google_cloud.env
 
 
 gcloud ml-engine models create $MODEL_NAME --regions=us-central1

@@ -9,6 +9,44 @@ import requests
 
 ATTEMPTS = 6
 
+def list_properties(host, api_key, thng_id):
+    res = requests.get(f"https://{host}/thngs/{thng_id}",
+                       headers={"Authorization": api_key, "Content-Type": "application/json"})
+    thng = res.json()
+    if thng:
+        return thng['properties']
+    else:
+        raise Exception(f'thng {thng_id} not found')
+
+def get_account_info(host, api_key):
+    headers = {"Authorization": api_key, "Content-Type": "application/json"}
+    res = requests.get("https://{}/access".format(host), headers=headers)
+    if not res.json():
+        raise Exception('API key not found')
+    return res.json()
+
+
+def get_app_key_context(host, api_key):
+    account = get_account_info(host, api_key)
+    if account['actor']['type']!='app':
+        raise Exception('This key is an {}. Use an app key or trusted app key instead'.format(account['actor']['type']))
+    else:
+        return dict(account_id=account['account'], project_id=account['project'], app_id=account['actor']['id'])
+
+
+def deploy_reactor_script(host, operator_api_key, project_id, app_id, bundle):
+    url = 'https://{host}/projects/{project_id}/applications/{app_id}/reactor/script'.format(
+        host=host,
+        project_id=project_id,
+        app_id=app_id)
+    print(url)
+    headers = {"Authorization": operator_api_key}
+    # fp = open('./bundle.zip','rb')
+    files = {'file':bundle}
+    res = requests.put(url,
+                       headers=headers,
+                       files=files)
+    return res
 
 async def get_everythng(url, session, headers):
     async with session.get(url, headers=headers) as resp:

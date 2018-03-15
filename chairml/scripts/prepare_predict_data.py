@@ -38,4 +38,4 @@ if __name__ == '__main__':
     inputs = [dict(instances=d) for d in data]
     # ujson.dump(dict(instances=data[1]), fd, ensure_ascii=True)
     with open(os.getenv('PREDICT_FILE'), 'w') as fd:
-        ujson.dump(inputs[3], fd,ensure_ascii=True)
+        ujson.dump(inputs, fd,ensure_ascii=True)

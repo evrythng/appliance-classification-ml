@@ -2,12 +2,10 @@
 
 source venv/bin/activate
 
-python setup.py build
-python setup.py install
 
-source ../evt_config/evt_predict.conf
+source ../evt_config/evt_predict.env
 
-source ../evt_config/google_cloud.conf
+source ../evt_config/google_cloud.env
 
 ./scripts/prepare_predict_data.py $PREDICT_FILE
 

@@ -3,16 +3,14 @@
 
 source venv/bin/activate
 
-python setup.py build
-python setup.py install
+source ../evt_config/google_cloud.env
 
-source ../evt_config/google_cloud.conf
 rm -rf $MOTION_DATA
 
 mkdir -p $MOTION_DATA
 
 # download generated training data
-source ../evt_config/evt_training_generated.conf
+source ../evt_config/evt_training_generated.env
 ./scripts/download_records.py
 
 # download training data from real pycom devices
