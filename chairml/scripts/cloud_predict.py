@@ -5,6 +5,7 @@ from googleapiclient import errors
 import ujson
 import os
 
+import numpy as np
 def predict_json(project, model, instances, version=None):
     """Send json data to a deployed model for prediction.
 
@@ -52,7 +53,9 @@ credentials = GoogleCredentials.get_application_default()
 try:
     with open(os.getenv('PREDICT_FILE')) as fd:
         for i in ujson.load(fd):
-            print(predict_json('connected-machine-learning','keras_chairml',i))
+            print('real {}'.format(predict_json('connected-machine-learning','keras_chairml',i)))
+            # gen = np.random.randint(low=0,high=100,size=(4,50))/np.random.randn(4,1)
+            # print('randomly generated {}'.format(predict_json('connected-machine-learning', 'keras_chairml', dict(instances=gen.reshape(4,-1).tolist()))))
 
 except errors.HttpError as err:
     # Something went wrong, print out some information.

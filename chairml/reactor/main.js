@@ -12,13 +12,14 @@ function onThngPropertiesChanged(event) {
     const propertyUpdates = JSON.parse(event.changes.magnitude.newValue);
     let data = vibrationProperty(propertyUpdates, [0, 1, 2, 3]);
     const f = transformFnDecorator(standardization, require('./fit_params.json'));
-    logger.info('debug hello world');
+    logger.info('debug coffee 3');
     data = f(data);
-    data = padSequence(data, 40);
+    data = padSequence(data, 50);
     data = np.transpose(data);
 
 
     let inputs = {"instances": [{instances: data}]};
+    let classes = require('./labels_encoding.json');
     auth.getAccessToken().then(accessToken => {
         request
             .post("https://ml.googleapis.com/v1/projects/connected-machine-learning/models/keras_chairml/versions/v1:predict")
@@ -29,9 +30,15 @@ function onThngPropertiesChanged(event) {
                 if (err) {
                     throw res.body;
                 } else {
+
+                    let probability  = res.body.predictions[0].predictions[0];
+                    let probabilities = {};
+                    probabilities[classes[0]] =  1.0 - probability;
+                    probabilities[classes[1]] =  probability;
+                    logger.debug(JSON.stringify(probabilities));
                     app.action('_eventClassification').create({
                         thng: event.thng.id,
-                        customFields: res.body
+                        customFields: probabilities
                     }).then(data => {
                         logger.info('new prediction ' + JSON.stringify(res.body));
                         done();

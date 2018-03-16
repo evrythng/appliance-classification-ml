@@ -8,7 +8,7 @@ source ../evt_config/google_cloud.env
 rm -rf $OUTPUT_DIR
 
 export TRAIN_STEPS=2
-export EPOCS=4
+export EPOCS=40
 
 
 gcloud ml-engine local train \

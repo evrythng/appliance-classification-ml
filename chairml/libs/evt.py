@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 
+from typing import Callable, Iterable, Union, Optional, List, AnyStr, Dict, BinaryIO
 import asyncio
 from urllib.parse import unquote_plus
 import aiohttp
 import uvloop
 import sys
 import requests
+import io
 
 ATTEMPTS = 6
 
-def list_properties(host, api_key, thng_id):
+def list_properties(host: str, api_key: str, thng_id: str) -> Dict:
     res = requests.get(f"https://{host}/thngs/{thng_id}",
                        headers={"Authorization": api_key, "Content-Type": "application/json"})
     thng = res.json()
@@ -26,7 +28,7 @@ def get_account_info(host, api_key):
     return res.json()
 
 
-def get_app_key_context(host, api_key):
+def get_app_key_context(host: str, api_key: str)->dict:
     account = get_account_info(host, api_key)
     if account['actor']['type']!='app':
         raise Exception('This key is an {}. Use an app key or trusted app key instead'.format(account['actor']['type']))
@@ -34,7 +36,7 @@ def get_app_key_context(host, api_key):
         return dict(account_id=account['account'], project_id=account['project'], app_id=account['actor']['id'])
 
 
-def deploy_reactor_script(host, operator_api_key, project_id, app_id, bundle):
+def deploy_reactor_script(host: str, operator_api_key: str, project_id: str, app_id: str, bundle: io.BytesIO):
     url = 'https://{host}/projects/{project_id}/applications/{app_id}/reactor/script'.format(
         host=host,
         project_id=project_id,
@@ -48,7 +50,7 @@ def deploy_reactor_script(host, operator_api_key, project_id, app_id, bundle):
                        files=files)
     return res
 
-async def get_everythng(url, session, headers):
+async def get_everythng(url: str, session: aiohttp.ClientSession, headers: Dict):
     async with session.get(url, headers=headers) as resp:
         data = await resp.json()
         if 200 <= resp.status < 300:
@@ -63,7 +65,7 @@ async def get_everythng(url, session, headers):
             return None, []
 
 
-async def main(url, api_key, data):
+async def main(url: str, api_key: str, data: List):
     headers = {"Authorization": api_key, "Content-Type": "application/json"}
     async with aiohttp.ClientSession() as session:
         while url:

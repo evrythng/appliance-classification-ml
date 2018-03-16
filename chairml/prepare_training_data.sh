@@ -10,7 +10,7 @@ rm -rf $MOTION_DATA
 mkdir -p $MOTION_DATA
 
 # download generated training data
-source ../evt_config/evt_training_generated.env
+source ../evt_config/evt_coffee_appliance.conf
 ./scripts/download_records.py
 
 # download training data from real pycom devices

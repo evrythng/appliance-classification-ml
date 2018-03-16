@@ -28,6 +28,8 @@ if __name__ == '__main__':
     label_ohe.fit(train_y)
 
     train_y, test_y = label_ohe.transform(train_y).reshape(-1,1), label_ohe.transform(test_y).reshape(-1,1)
+    with open(os.getenv('LABELS_ENC'),'w') as fd:
+        ujson.dump(label_ohe.classes_, fd, ensure_ascii=True)
     # train_y = np.array(train_y == np.arange(len(label_ohe.classes_)),dtype=float)
     # test_y = np.array(test_y == np.arange(len(label_ohe.classes_)),dtype=float)
     train_y, test_y = np.array(train_y,dtype=float), np.array(test_y,dtype=float)
@@ -44,8 +46,7 @@ if __name__ == '__main__':
 
     # train_x = train_x.reshape(len(train_x), MAX_LEN, -1)
     # test_x = test_x.reshape(len(test_x), MAX_LEN, -1)
-    # train_x = train_x.reshape(len(train_x), MAX_LEN, -1)
-    # test_x = test_x.reshape(len(train_x), MAX_LEN, -1)
+
 
     if np.all(test_x == train_x):
         raise Exception('train_x and test_x are the same')

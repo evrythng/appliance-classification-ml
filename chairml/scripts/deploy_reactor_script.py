@@ -17,6 +17,8 @@ if __name__ == '__main__':
         bundle.write(os.getenv('FIT_PARAMS') + '.json', (os.getenv('FIT_PARAMS') + '.json').split('/')[-1])
         print('Adding ' + os.getenv('GOOGLE_CREDENTIALS').split('/')[-1])
         bundle.write(os.getenv('GOOGLE_CREDENTIALS'), os.getenv('GOOGLE_CREDENTIALS').split('/')[-1])
+        print('Adding ' + os.getenv('LABELS_ENC').split('/')[-1])
+        bundle.write(os.getenv('LABELS_ENC'), os.getenv('LABELS_ENC').split('/')[-1])
         for f in filter(lambda x: x[0] != '.', os.listdir(os.getenv('REACTOR_DIR'))):
             print('Adding ' + f)
             bundle.write(os.path.join(os.getenv('REACTOR_DIR'), f), f)

@@ -11,7 +11,7 @@ source ../evt_config/google_cloud.env
 
 
 export TRAIN_STEPS=100
-export EPOCS=200
+export EPOCS=50
 
 
 gcloud ml-engine jobs submit training $JOB_NAME \

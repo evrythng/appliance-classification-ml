@@ -29,35 +29,6 @@ from tensorflow.python.saved_model import tag_constants, signature_constants
 from tensorflow.python.saved_model.signature_def_utils_impl import predict_signature_def, classification_signature_def
 
 
-# Python2/3 compatibility imports
-# from builtins import range
-
-
-# # csv columns in the input file
-# CSV_COLUMNS = ('age', 'workclass', 'fnlwgt', 'education', 'education_num',
-#                'marital_status', 'occupation', 'relationship', 'race',
-#                'gender', 'capital_gain', 'capital_loss', 'hours_per_week',
-#                'native_country', 'income_bracket')
-#
-# CSV_COLUMN_DEFAULTS = [[0], [''], [0], [''], [0], [''], [''], [''], [''],
-#                        [''], [0], [0], [0], [''], ['']]
-#
-# # Categorical columns with vocab size
-# # native_country and fnlwgt are ignored
-# CATEGORICAL_COLS = (('education', 16), ('marital_status', 7),
-#                     ('relationship', 6), ('workclass', 9), ('occupation', 15),
-#                     ('gender', [' Male', ' Female']), ('race', 5))
-#
-# CONTINUOUS_COLS = ('age', 'education_num', 'capital_gain', 'capital_loss',
-#                    'hours_per_week')
-#
-# LABELS = [' <=50K', ' >50K']
-# LABEL_COLUMN = 'income_bracket'
-#
-# UNUSED_COLUMNS = set(CSV_COLUMNS) - set(
-#     list(zip(*CATEGORICAL_COLS))[0] + CONTINUOUS_COLS + (LABEL_COLUMN,))
-#
-
 
 
 
@@ -72,10 +43,10 @@ def compile_model(model):
 def model_fn(input_shape, hidden_dim):
     model = Sequential()
     model.add(Conv1D(hidden_dim, 2, activation='relu', input_shape=input_shape))
-    # model.add(MaxPool1D(2))
+    model.add(Dropout(0.5))
     model.add(Conv1D(hidden_dim, 2, activation='relu'))
-    # model.add(MaxPool1D(2))
-    # model.add(Conv1D(hidden_dim, 2, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Conv1D(hidden_dim, 2, activation='relu'))
     model.add(GlobalMaxPooling1D())
     model.add(Dense(1, activation='sigmoid'))  # SGD(lr=0.01, clipvalue=0.5) #adadelta
     return compile_model(model)

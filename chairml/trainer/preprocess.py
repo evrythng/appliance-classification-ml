@@ -4,10 +4,10 @@ import sys
 
 import ujson
 
-MAX_LEN = 40
+MAX_LEN = 50
 CHANNELS = 4
 INPUT_SHAPE = [MAX_LEN,CHANNELS][::-1]
-HIDDEN_DIM=32
+HIDDEN_DIM=48
 CLASSES = 2
 
 def fit_training_data_decorator(fit_fn):
