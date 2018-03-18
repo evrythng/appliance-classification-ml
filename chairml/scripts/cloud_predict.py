@@ -54,7 +54,7 @@ try:
     with open(os.getenv('PREDICT_FILE')) as fd:
         for i in ujson.load(fd):
             print('real {}'.format(predict_json('connected-machine-learning','keras_chairml',i)))
-            # gen = np.random.randint(low=0,high=100,size=(4,50))/np.random.randn(4,1)
+            # gen = np.random.randint(low=0,high=100,size=(50,4))/np.random.randn(1,4)
             # print('randomly generated {}'.format(predict_json('connected-machine-learning', 'keras_chairml', dict(instances=gen.reshape(4,-1).tolist()))))
 
 except errors.HttpError as err:

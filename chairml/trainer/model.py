@@ -22,7 +22,8 @@ import ujson
 import numpy as np
 import tensorflow as tf
 from keras import backend as K
-from keras.layers import Input, Conv1D,GlobalMaxPooling1D,Dense, MaxPool1D,Dropout
+from keras import regularizers
+from keras.layers import Input, Conv1D,GlobalMaxPooling1D,Dense, MaxPool1D,Dropout, LSTM
 from keras.models import Model, Sequential
 from tensorflow.python.saved_model import builder as saved_model_builder
 from tensorflow.python.saved_model import tag_constants, signature_constants
@@ -34,21 +35,28 @@ from tensorflow.python.saved_model.signature_def_utils_impl import predict_signa
 
 
 def compile_model(model):
-    model.compile(optimizer='rmsprop',
+    model.compile(optimizer='adam',
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
     return model
 
 
-def model_fn(input_shape, hidden_dim):
+def model_fn_conv1d(input_shape, hidden_dim):
     model = Sequential()
-    model.add(Conv1D(hidden_dim, 2, activation='relu', input_shape=input_shape))
-    model.add(Dropout(0.5))
-    model.add(Conv1D(hidden_dim, 2, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Conv1D(hidden_dim, 2, activation='relu'))
+    model.add(Conv1D(hidden_dim, 9, activation='relu', input_shape=input_shape))
+    model.add(MaxPool1D(3))
+    model.add(Conv1D(hidden_dim, 9, activation='relu'))
+    model.add(Dropout(0.3))
     model.add(GlobalMaxPooling1D())
     model.add(Dense(1, activation='sigmoid'))  # SGD(lr=0.01, clipvalue=0.5) #adadelta
+    return compile_model(model)
+
+def model_fn(input_shape, hidden_dim):
+    model = Sequential()
+    model.add(LSTM(hidden_dim, input_shape=input_shape, activation='relu', return_sequences=True,
+                   activity_regularizer=regularizers.l2(1e-05)))
+    model.add(LSTM(hidden_dim, activation='relu', activity_regularizer=regularizers.l2(1e-05)))
+    model.add(Dense(1, activation='sigmoid'))
     return compile_model(model)
 
 

@@ -15,7 +15,7 @@ function onThngPropertiesChanged(event) {
     logger.info('debug coffee 3');
     data = f(data);
     data = padSequence(data, 50);
-    data = np.transpose(data);
+    // data = np.transpose(data);
 
 
     let inputs = {"instances": [{instances: data}]};

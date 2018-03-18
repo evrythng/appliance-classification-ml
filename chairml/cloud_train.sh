@@ -17,7 +17,7 @@ export EPOCS=50
 gcloud ml-engine jobs submit training $JOB_NAME \
                                     --stream-logs \
                                     --config config.yaml \
-                                    --runtime-version 1.4 \
+                                    --runtime-version 1.5 \
                                     --job-dir $JOB_DIR \
                                     --package-path trainer \
                                     --module-name trainer.task \

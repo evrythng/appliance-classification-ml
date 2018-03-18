@@ -6,7 +6,7 @@ import ujson
 import numpy as np
 
 from functools import reduce
-from trainer.preprocess import padding, fit_std_scaler as fit_training_data, transform_std as normalize_features, MAX_LEN
+from trainer.preprocess import padding, fit_std_scaler as fit_training_data, transform_std as normalize_features, MAX_LEN, FEATURES
 from sklearn.preprocessing import LabelEncoder
 if __name__ == '__main__':
 
@@ -44,8 +44,8 @@ if __name__ == '__main__':
     train_x = np.array(padding(train_x, MAX_LEN))
     test_x = np.array(padding(test_x, MAX_LEN))
 
-    # train_x = train_x.reshape(len(train_x), MAX_LEN, -1)
-    # test_x = test_x.reshape(len(test_x), MAX_LEN, -1)
+    train_x = train_x.reshape(-1, MAX_LEN, FEATURES)
+    test_x = test_x.reshape(-1, MAX_LEN, FEATURES)
 
 
     if np.all(test_x == train_x):
