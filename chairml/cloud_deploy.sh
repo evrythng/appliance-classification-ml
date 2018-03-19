@@ -11,7 +11,7 @@ MODEL_BINARIES=$JOB_DIR/export
 
 gsutil ls -r $MODEL_BINARIES
 
-gcloud ml-engine versions create v2 \
+gcloud ml-engine versions create v1 \
       --model $MODEL_NAME \
       --origin $MODEL_BINARIES \
       --runtime-version 1.5
