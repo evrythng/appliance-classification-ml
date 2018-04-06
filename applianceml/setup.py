@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from setuptools import find_packages
 from setuptools import setup
-import sys
+import os
 
-if len(sys.argv) == 2 and sys.argv[1] == 'DEV':
+if os.getenv('ML_DEV_ENV') and os.getenv('ML_DEV_ENV') == 'LOCAL':
     setup(
         name='trainer',
         author='joel@evrythng.com',
