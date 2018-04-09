@@ -30,7 +30,7 @@ from tensorflow.python.saved_model import builder as saved_model_builder
 from tensorflow.python.saved_model import tag_constants, signature_constants
 from tensorflow.python.saved_model.signature_def_utils_impl import predict_signature_def
 
-LOOKBACK = 100
+LOOKBACK = 60
 CLASSES = 3
 INPUT_SHAPE = [LOOKBACK, CLASSES]
 

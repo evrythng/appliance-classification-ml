@@ -51,10 +51,13 @@ function padSequence(data, maxlen) {
     }
     else {
         let colSize = data[0].length;
-        for (let i = data.length; i < maxlen; i++) {
-            data.push(Array(colSize).fill(0.0));
+        let out = [];
+        for (let i = 0; i < data.length - maxlen; i++)
+            out.push(Array(colSize).fill(0.0));
+        for (let d of data) {
+            out.push(d);
         }
-        return data
+        return out
     }
 
 
