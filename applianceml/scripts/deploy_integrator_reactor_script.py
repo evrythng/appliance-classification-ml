@@ -5,8 +5,18 @@ from zipfile import ZipFile
 import os
 import io
 import evt.utils
+import ujson
 
 if __name__ == '__main__':
+
+    with open(os.getenv('MODEL_CONFIG_PARAMS')) as fd:
+        model_config = ujson.load(fd)
+    model_config['google_project'] = os.getenv('GOOGLE_PROJECT')
+    model_config['model_name'] = os.getenv('MODEL_NAME')
+
+    with open(os.getenv('MODEL_CONFIG_PARAMS'), 'w') as fd:
+        ujson.dump(model_config, fd, ensure_ascii=True)
+
     fp = io.BytesIO()
     with ZipFile(fp, 'w') as bundle:
         print('Adding ' + os.getenv('GOOGLE_CREDENTIALS').split('/')[-1])

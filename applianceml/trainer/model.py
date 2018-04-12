@@ -24,15 +24,17 @@ import numpy as np
 np.random.seed(42)
 import tensorflow as tf
 from keras import backend as K
-from keras.layers import Dense, GRU, Conv1D, MaxPool1D, GlobalMaxPool1D,MaxPooling1D
+from keras.layers import Dense, GRU, Conv1D, MaxPool1D, GlobalMaxPool1D, MaxPooling1D
 from keras.models import Sequential
 from tensorflow.python.saved_model import builder as saved_model_builder
 from tensorflow.python.saved_model import tag_constants, signature_constants
 from tensorflow.python.saved_model.signature_def_utils_impl import predict_signature_def
 
-LOOKBACK = 60
+LOOKBACK = 100
 CLASSES = 3
-INPUT_SHAPE = [LOOKBACK, CLASSES]
+FEATURES = 3
+INPUT_SHAPE = [LOOKBACK, FEATURES]
+
 
 def compile_model(model):
     model.compile(optimizer='rmsprop',
@@ -40,11 +42,12 @@ def compile_model(model):
                   metrics=['accuracy'])
     return model
 
+
 def model_fn(input_shape, classes):
     model = Sequential()
-    model.add(Conv1D(64, 5, input_shape=input_shape, activation='relu'))
-    model.add(GRU(64, dropout=0.1, recurrent_dropout=0.5, return_sequences=True))
-    model.add(GRU(32, dropout=0.1, recurrent_dropout=0.5,return_sequences=False))
+    model.add(Conv1D(70, 5, input_shape=input_shape, activation='relu'))
+    model.add(GRU(70, dropout=0.4, recurrent_dropout=0.5, return_sequences=True))
+    model.add(GRU(20, dropout=0.4, recurrent_dropout=0.5, return_sequences=False))
     model.add(Dense(classes, activation='softmax'))
     return compile_model(model)
 
@@ -68,7 +71,7 @@ def to_savedmodel(model, export_path):
         builder.save()
 
 
-def generator_input(input_file, batch_size=2):
+def generator_input(input_file, batch_size=32):
     """Generator function to produce features and labels
        needed by keras fit_generator.
     """

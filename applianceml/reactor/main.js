@@ -11,10 +11,15 @@ const {auth} = require('google-auth-library');
 function onThngPropertiesChanged(event) {
     const propertyUpdates = JSON.parse(event.changes.magnitude.newValue);
     let data = vibrationProperty(propertyUpdates, [1, 2, 3]);
-    let inputDataParams = require('./input_data_params.json');
-    const f = transformFnDecorator(standardization, inputDataParams);
+    let modelConfigParams = require('./model_config_params.json');
+    if (data.length< modelConfigParams.lookback) {
+        logger.warn(JSON.stringify(data));
+        done();
+    } else {
+        data = data.slice(0,100);
+    const f = transformFnDecorator(standardization, modelConfigParams);
     data = f(data);
-    data = padSequence(data, inputDataParams.lookback);
+    // data = padSequence(data, modelConfigParams.lookback);
 
 
     let inputs = {"instances": [{instances: data}]};
@@ -22,7 +27,7 @@ function onThngPropertiesChanged(event) {
 
     return auth.getAccessToken().then(accessToken => {
         request
-            .post("https://ml.googleapis.com/v1/projects/connected-machine-learning/models/applianceml:predict")
+            .post("https://ml.googleapis.com/v1/projects/"+modelConfigParams.google_project +"/models/" + modelConfigParams.model_name + "/versions/v1:predict")
             .send(inputs)
             .set("Authorization", `Bearer ${accessToken}`)
             .set("Content-Type", "application/json")
@@ -41,7 +46,7 @@ function onThngPropertiesChanged(event) {
                         }
                     }
                     logger.debug(JSON.stringify({class:classes[max_idx], probability:probabilities[max_idx]}));
-                    app.action('_prediction').create({
+                    app.action('_ml_prediction').create({
                         thng: event.thng.id,
                         customFields: {class:classes[max_idx], probability:probabilities[max_idx]}
                     }).then(data => {
@@ -56,5 +61,5 @@ function onThngPropertiesChanged(event) {
     }).catch(err => {
         logger.error(err);
         return done();
-    })
+    })}
 }
