@@ -24,13 +24,13 @@ import numpy as np
 np.random.seed(42)
 import tensorflow as tf
 from keras import backend as K
-from keras.layers import Dense, GRU, Conv1D, MaxPool1D, GlobalMaxPool1D, MaxPooling1D
+from keras.layers import Dense, GRU, Conv1D, MaxPool1D, GlobalMaxPool1D, MaxPooling1D,Dropout,Flatten
 from keras.models import Sequential
 from tensorflow.python.saved_model import builder as saved_model_builder
 from tensorflow.python.saved_model import tag_constants, signature_constants
 from tensorflow.python.saved_model.signature_def_utils_impl import predict_signature_def
 
-LOOKBACK = 100
+LOOKBACK = 150
 CLASSES = 3
 FEATURES = 3
 INPUT_SHAPE = [LOOKBACK, FEATURES]
@@ -45,9 +45,12 @@ def compile_model(model):
 
 def model_fn(input_shape, classes):
     model = Sequential()
-    model.add(Conv1D(70, 5, input_shape=input_shape, activation='relu'))
-    model.add(GRU(70, dropout=0.4, recurrent_dropout=0.5, return_sequences=True))
-    model.add(GRU(20, dropout=0.4, recurrent_dropout=0.5, return_sequences=False))
+    model.add(Conv1D(32, 3, input_shape=input_shape, activation='relu'))
+    model.add(MaxPooling1D(3))
+    model.add(Conv1D(32, 3, activation='relu'))
+    # model.add(GRU(128, dropout=0.1, recurrent_dropout=0.5, return_sequences=True))
+    # model.add(GlobalMaxPool1D())
+    model.add(GRU(20, dropout=0.1, recurrent_dropout=0.5, return_sequences=False))
     model.add(Dense(classes, activation='softmax'))
     return compile_model(model)
 
