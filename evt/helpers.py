@@ -27,12 +27,13 @@ def property_updates_to_df(property_updates):
         a = np.array(v, dtype=float)
         if np.any(a.max(axis=0)[1:] > 4) or np.any(a.min(axis=0)[1:] < -4):
             continue
+        a = np.hstack([a[:, 0:1], a])
         a[:, 0] *= 1000
         a[:, 0] += t
         data.append(a)
-    df = pd.DataFrame(np.vstack(data), columns=['t', 'x', 'y', 'z'])
-    df['t'] = pd.to_datetime(df['t'], unit='ms')
-    df.set_index('t', inplace=True)
+    df = pd.DataFrame(np.vstack(data), columns=['ts','t', 'x', 'y', 'z'])
+    df['ts'] = pd.to_datetime(df['ts'], unit='ms')
+    df.set_index('ts', inplace=True)
     return df.sort_index()
 
 
