@@ -30,9 +30,9 @@ from tensorflow.python.saved_model import builder as saved_model_builder
 from tensorflow.python.saved_model import tag_constants, signature_constants
 from tensorflow.python.saved_model.signature_def_utils_impl import predict_signature_def
 
-LOOKBACK = 150
+LOOKBACK = 96
 CLASSES = 3
-FEATURES = 3
+FEATURES = 4
 INPUT_SHAPE = [LOOKBACK, FEATURES]
 
 
@@ -48,9 +48,11 @@ def model_fn(input_shape, classes):
     model.add(Conv1D(32, 3, input_shape=input_shape, activation='relu'))
     model.add(MaxPooling1D(3))
     model.add(Conv1D(32, 3, activation='relu'))
+    model.add(MaxPooling1D(3))
+    model.add(Conv1D(32, 3, activation='relu'))
     # model.add(GRU(128, dropout=0.1, recurrent_dropout=0.5, return_sequences=True))
     # model.add(GlobalMaxPool1D())
-    model.add(GRU(20, dropout=0.1, recurrent_dropout=0.5, return_sequences=False))
+    model.add(GRU(24, dropout=0.1, recurrent_dropout=0.5, return_sequences=False))
     model.add(Dense(classes, activation='softmax'))
     return compile_model(model)
 
