@@ -16,7 +16,7 @@ function onThngPropertiesChanged(event) {
         logger.warn(JSON.stringify(data));
         done();
     } else {
-        data = data.slice(0,100);
+        data = data.slice(0,modelConfigParams.lookback);
     const f = transformFnDecorator(standardization, modelConfigParams);
     data = f(data);
     // data = padSequence(data, modelConfigParams.lookback);
