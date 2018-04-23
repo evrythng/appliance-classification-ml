@@ -46,7 +46,7 @@ function onThngPropertiesChanged(event) {
                         }
                     }
                     logger.debug(JSON.stringify({class:classes[max_idx], probability:probabilities[max_idx]}));
-                    app.action('_ml_prediction_evt_london').create({
+                    app.action('_ml_prediction').create({
                         thng: event.thng.id,
                         customFields: {class:classes[max_idx], probability:probabilities[max_idx]}
                     }).then(data => {
