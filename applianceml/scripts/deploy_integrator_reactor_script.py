@@ -13,6 +13,7 @@ if __name__ == '__main__':
         model_config = ujson.load(fd)
     model_config['google_project'] = os.getenv('GOOGLE_PROJECT')
     model_config['model_name'] = os.getenv('MODEL_NAME')
+    model_config['model_version'] = os.getenv('MODEL_VERSION')
 
     with open(os.getenv('MODEL_CONFIG_PARAMS'), 'w') as fd:
         ujson.dump(model_config, fd, ensure_ascii=True)

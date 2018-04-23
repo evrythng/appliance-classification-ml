@@ -27,7 +27,7 @@ function onThngPropertiesChanged(event) {
 
     return auth.getAccessToken().then(accessToken => {
         request
-            .post("https://ml.googleapis.com/v1/projects/"+modelConfigParams.google_project +"/models/" + modelConfigParams.model_name + "/versions/v1:predict")
+            .post("https://ml.googleapis.com/v1/projects/"+modelConfigParams.google_project +"/models/" + modelConfigParams.model_name + "/versions/"+modelConfigParams.model_version +":predict")
             .send(inputs)
             .set("Authorization", `Bearer ${accessToken}`)
             .set("Content-Type", "application/json")
