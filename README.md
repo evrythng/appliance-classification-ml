@@ -1,6 +1,6 @@
 # EVRYTHNG Machine Learning
 
-This is the repository for our tutorial [Intelligent Appliance Classification](https://developers.evrythng.com/docs/intelligent-appliance-classification). Please follow this guide on how to use the EVRYTHNG Platform in combination with Google Cloud ML Engine.
+This is the sample code for our tutorial on [Intelligent Appliance Classification](https://developers.evrythng.com/docs/intelligent-appliance-classification), which will take you through the steps to build an appliance classifier using the EVRYTHNG platform and deep learning.
 
 Content:
 
