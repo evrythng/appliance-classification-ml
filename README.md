@@ -1,4 +1,4 @@
-# EVRYTHNG Machine Learning
+# EVRYTHNG Machine Learning: Intelligent Appliance Classification
 
 This is the sample code for our tutorial on [Intelligent Appliance Classification](https://developers.evrythng.com/docs/intelligent-appliance-classification), which will take you through the steps to build an appliance classifier using the EVRYTHNG platform and deep learning.
 
